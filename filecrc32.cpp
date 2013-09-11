@@ -1,6 +1,7 @@
 #include <QFile>
 #include <QString>
 #include <stdexcept>
+#include <QElapsedTimer>
 
 #include "filecrc32.h"
 
@@ -24,7 +25,7 @@ unsigned int FileCRC32::compute()
 {
     char buffer[bufsize];
     QFile file(m_fileName);
-
+    int percent = 0;
 
     bool isOpen = file.open(QIODevice::ReadOnly);
 
@@ -36,8 +37,15 @@ unsigned int FileCRC32::compute()
 
     while (!file.atEnd())
     {
+        int prevPercent = percent;
         qint64 bytesRead = file.read(buffer, bufsize);
         CRC32::Update(buffer, bytesRead);
+        percent = static_cast<int>((static_cast<float>(file.pos()) / static_cast<float>(file.size())) * 100);
+
+        // prevent the function from emitting too much progress updates
+        if (percent != prevPercent)
+            emit progress(percent);
+
     }
 
     file.close();

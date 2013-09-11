@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>401</width>
-    <height>222</height>
+    <height>252</height>
    </rect>
   </property>
   <property name="font">
@@ -69,29 +69,41 @@
      </layout>
     </item>
     <item row="2" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Result</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPlainTextEdit" name="hashTextEdit">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="calculateHashButton">
-        <property name="text">
-         <string>Compute CRC-32</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Result</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPlainTextEdit" name="hashTextEdit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="textDirection">
+       <enum>QProgressBar::TopToBottom</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QPushButton" name="calculateHashButton">
+      <property name="text">
+       <string>Compute CRC-32</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

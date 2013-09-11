@@ -34,8 +34,6 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QThreadPool>
-#include <QDebug>
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -104,6 +102,7 @@ void MainWindow::on_calculateHashButton_clicked()
 
     connect(crc32, SIGNAL(doneProcessing(uint)), this, SLOT(doneProcessing(uint)));
     connect(crc32, SIGNAL(errorRaised()), this, SLOT(errorRaised()));
+    connect(crc32, SIGNAL(progress(int)), this, SLOT(progress(int)));
 
     QThreadPool::globalInstance()->start(crc32);
 }
@@ -128,4 +127,9 @@ void MainWindow::errorRaised()
     ui->hashTextEdit->clear();
     ui->hashTextEdit->appendPlainText("Can't open file!");
     ui->calculateHashButton->setEnabled(true);
+}
+
+void MainWindow::progress(int val)
+{
+    ui->progressBar->setValue(val);
 }

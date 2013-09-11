@@ -56,6 +56,8 @@ private slots:
 
     void errorRaised();
 
+    void progress(int val);
+
 private:
     Ui::MainWindow *ui;
     static const int m_bufsize = 32768;

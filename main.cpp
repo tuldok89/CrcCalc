@@ -31,16 +31,15 @@
 
 #include <QApplication>
 
-#define APP_VERSION "1.0.0"
+#define APP_VERSION "2.0.0"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QString v = APP_VERSION;
 
     a.setOrganizationName("Tuldok");
     a.setApplicationName("CrcCalc");
-    a.setApplicationVersion(v);
+    a.setApplicationVersion(APP_VERSION);
 
     MainWindow w;
     w.show();

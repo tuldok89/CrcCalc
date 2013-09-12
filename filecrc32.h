@@ -46,8 +46,11 @@ public:
 
 signals:
     void doneProcessing(unsigned int crc32);
+    void doneProcessing(QString fileName, unsigned int crc32);
     void errorRaised();
+    void errorRaised(QString fileName);
     void progress(int percent);
+    void progress(QString fileName, int percent);
 
 private:
     QString m_fileName;

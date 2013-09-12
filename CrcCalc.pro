@@ -34,3 +34,5 @@ OTHER_FILES += \
     "./icons/MAX.ico" \
     "./icons/XCM.ico" \
     "icon.rc"
+
+*-g++:QMAKE_CXXFLAGS = "-std=c++0x"

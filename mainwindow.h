@@ -30,10 +30,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtContainerFwd>
 
 namespace Ui {
 class MainWindow;
 }
+
+class QTableWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -48,20 +51,27 @@ private slots:
 
     void on_action_About_triggered();
 
-    void on_browseFileButton_clicked();
+    void doneProcessing(QString fileName, unsigned int crc32);
 
-    void on_calculateHashButton_clicked();
+    void errorRaised(QString fileName);
 
-    void doneProcessing(unsigned int crc32);
+    void progress(QString fileName, int val);
 
-    void errorRaised();
+    void on_addFilesButton_clicked();
 
-    void progress(int val);
+    void on_calculateCrcButton_clicked();
+
+    void on_clearItemsButton_clicked();
+
+    void on_deleteItemButton_clicked();
+
+    void on_exportResultsButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-    static const int m_bufsize = 32768;
-    void changeLang();
+    QStringList m_fileNames;
+
+    void addNewRow(QString fileName, QTableWidget* table, QString progress = "", QString status = "", QString crc32 = "");
 };
 
 #endif // MAINWINDOW_H

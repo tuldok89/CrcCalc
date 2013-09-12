@@ -34,13 +34,26 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QThreadPool>
+#include <QStringList>
+#include <QDebug>
+#include <QTableWidgetItem>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setFixedSize(this->size());
+
+    //QStringList headers = {"File", "Progress", "Status", "CRC-32"};
+    QStringList headers;
+    headers.push_back("File");
+    headers.push_back("Progress");
+    headers.push_back("Status");
+    headers.push_back("CRC-32");
+    ui->filesTable->setHorizontalHeaderLabels(headers);
+    ui->filesTable->setColumnWidth(0, 350);
+    QThreadPool::globalInstance()->setMaxThreadCount(1);
+    this->setMinimumSize(this->size());
 }
 
 MainWindow::~MainWindow()
@@ -68,68 +81,100 @@ void MainWindow::on_action_About_triggered()
     msgBox.about(this, title, msg);
 }
 
-//!
-//! \brief Browse for input file
-//!
-void MainWindow::on_browseFileButton_clicked()
+
+void MainWindow::errorRaised(QString fileName)
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Browse for File"), "", tr("All Files (*.*)"));
-
-    if (fileName == "")
-        return;
-
-    ui->filenameLineEdit->setText(fileName);
+    auto cell = ui->filesTable->findItems(fileName, Qt::MatchFixedString);
+    ui->filesTable->item(cell[0]->row(), 2)->setText("ERROR");
+    ui->calculateCrcButton->setEnabled(true);
 }
 
-//!
-//! \brief calculateHashButton click slot
-//!
-void MainWindow::on_calculateHashButton_clicked()
+void MainWindow::doneProcessing(QString fileName, unsigned int crc32)
 {
-    QMessageBox msgbox;
+    QString str;
+    auto cell = ui->filesTable->findItems(fileName, Qt::MatchFixedString);
+    ui->filesTable->item(cell[0]->row(), 3)->setText(QString("%1").arg(str.sprintf("%.8X", crc32)));
+    ui->filesTable->item(cell[0]->row(), 2)->setText(QString("Done"));
+    ui->calculateCrcButton->setEnabled(true);
+}
 
-    if (ui->filenameLineEdit->text() == QString("")) // check if filename box is empty
+void MainWindow::progress(QString fileName, int val)
+{
+    auto cell = ui->filesTable->findItems(fileName, Qt::MatchFixedString);
+    ui->filesTable->item(cell[0]->row(), 1)->setText(QString("%1%").arg(val));
+}
+
+void MainWindow::on_addFilesButton_clicked()
+{
+    QStringList files;
+    files = QFileDialog::getOpenFileNames(this, "Browse for Files", "", "All Files (*.*)");
+
+    foreach (QString file, files)
     {
-        msgbox.setText(tr("There is no input file!"));
-        msgbox.setIcon(QMessageBox::Critical);
-        msgbox.exec();
-        return;
+        if (m_fileNames.contains(file))
+            continue;
+
+        addNewRow(file, ui->filesTable);
+        m_fileNames.push_back(file);
     }
-
-    ui->calculateHashButton->setEnabled(false);
-
-    FileCRC32 *crc32 = new FileCRC32(ui->filenameLineEdit->text());
-
-    connect(crc32, SIGNAL(doneProcessing(uint)), this, SLOT(doneProcessing(uint)));
-    connect(crc32, SIGNAL(errorRaised()), this, SLOT(errorRaised()));
-    connect(crc32, SIGNAL(progress(int)), this, SLOT(progress(int)));
-
-    QThreadPool::globalInstance()->start(crc32);
 }
 
-//!
-//! \brief MainWindow::doneProcessing
-//! \param crc32
-//!
-void MainWindow::doneProcessing(unsigned int crc32)
+void MainWindow::addNewRow(QString fileName, QTableWidget* table, QString progress, QString status, QString crc32)
 {
-    ui->calculateHashButton->setEnabled(true);
+    auto fileItem = new QTableWidgetItem(fileName);
+    auto progressItem = new QTableWidgetItem(progress);
+    auto statusItem = new QTableWidgetItem(status);
+    auto crc32Item = new QTableWidgetItem(crc32);
 
-    QString ckstr;
-    ckstr = ckstr.sprintf("CRC32: %.8X", crc32);
+    int rowCount = table->rowCount();
 
-    ui->hashTextEdit->clear();
-    ui->hashTextEdit->appendPlainText(ckstr);
+    table->setRowCount(rowCount + 1);
+
+    table->setItem(rowCount, 0, fileItem);
+    table->setItem(rowCount, 1, progressItem);
+    table->setItem(rowCount, 2, statusItem);
+    table->setItem(rowCount, 3, crc32Item);
 }
 
-void MainWindow::errorRaised()
+void MainWindow::on_calculateCrcButton_clicked()
 {
-    ui->hashTextEdit->clear();
-    ui->hashTextEdit->appendPlainText("Can't open file!");
-    ui->calculateHashButton->setEnabled(true);
+    ui->calculateCrcButton->setEnabled(false);
+    foreach (QString file, m_fileNames)
+    {
+        auto fileCRC = new FileCRC32(file);
+
+        connect(fileCRC, SIGNAL(doneProcessing(QString,uint)), this, SLOT(doneProcessing(QString,uint)));
+        connect(fileCRC, SIGNAL(errorRaised(QString)), this, SLOT(errorRaised(QString)));
+        connect(fileCRC, SIGNAL(progress(QString,int)), this, SLOT(progress(QString,int)));
+
+        QThreadPool::globalInstance()->start(fileCRC);
+    }
 }
 
-void MainWindow::progress(int val)
+void MainWindow::on_clearItemsButton_clicked()
 {
-    ui->progressBar->setValue(val);
+    ui->filesTable->clearContents();
+    ui->filesTable->setRowCount(0);
+    m_fileNames.clear();
+}
+
+void MainWindow::on_deleteItemButton_clicked()
+{
+    auto items = ui->filesTable->selectedItems();
+    QList<int> idxToDelete;
+
+    foreach(QTableWidgetItem* item, items)
+    {
+        if (!idxToDelete.contains(item->row()))
+        {
+            int row = item->row();
+            idxToDelete.push_back(row);
+            ui->filesTable->removeRow(0);
+        }
+    }
+}
+
+void MainWindow::on_exportResultsButton_clicked()
+{
+
 }

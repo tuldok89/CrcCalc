@@ -85,7 +85,7 @@ void MainWindow::on_action_About_triggered()
 void MainWindow::errorRaised(QString fileName)
 {
     auto cell = ui->filesTable->findItems(fileName, Qt::MatchFixedString);
-    ui->filesTable->item(cell[0]->row(), 2)->setText("ERROR");
+    ui->filesTable->item(cell[0]->row(), 2)->setText(tr("ERROR"));
     ui->calculateCrcButton->setEnabled(true);
 }
 
@@ -94,7 +94,7 @@ void MainWindow::doneProcessing(QString fileName, unsigned int crc32)
     QString str;
     auto cell = ui->filesTable->findItems(fileName, Qt::MatchFixedString);
     ui->filesTable->item(cell[0]->row(), 3)->setText(QString("%1").arg(str.sprintf("%.8X", crc32)));
-    ui->filesTable->item(cell[0]->row(), 2)->setText(QString("Done"));
+    ui->filesTable->item(cell[0]->row(), 2)->setText(QString(tr("Done")));
     ui->calculateCrcButton->setEnabled(true);
 }
 
@@ -107,7 +107,7 @@ void MainWindow::progress(QString fileName, int val)
 void MainWindow::on_addFilesButton_clicked()
 {
     QStringList files;
-    files = QFileDialog::getOpenFileNames(this, "Browse for Files", "", "All Files (*.*)");
+    files = QFileDialog::getOpenFileNames(this, tr("Browse for Files"), "", tr("All Files (*.*)"));
 
     foreach (QString file, files)
     {
@@ -119,6 +119,15 @@ void MainWindow::on_addFilesButton_clicked()
     }
 }
 
+//!
+//! \brief Add new row to a QTableWidget
+//! \param fileName
+//! \param table
+//! \param progress
+//! \param status
+//! \param crc32
+//! \todo Genericize the function. Use either variadic templates or a QStringList for parameters
+//!
 void MainWindow::addNewRow(QString fileName, QTableWidget* table, QString progress, QString status, QString crc32)
 {
     auto fileItem = new QTableWidgetItem(fileName);
@@ -147,6 +156,7 @@ void MainWindow::on_calculateCrcButton_clicked()
         connect(fileCRC, SIGNAL(errorRaised(QString)), this, SLOT(errorRaised(QString)));
         connect(fileCRC, SIGNAL(progress(QString,int)), this, SLOT(progress(QString,int)));
 
+        // queue input files
         QThreadPool::globalInstance()->start(fileCRC);
     }
 }
@@ -176,5 +186,5 @@ void MainWindow::on_deleteItemButton_clicked()
 
 void MainWindow::on_exportResultsButton_clicked()
 {
-
+    QMessageBox::information(this, "TODO", "Not yet implemented");
 }

@@ -40,7 +40,7 @@ unsigned int FileCRC32::compute()
     {
         int prevPercent = percent;
         qint64 bytesRead = file.read(buffer, bufsize);
-        CRC32::Update(buffer, bytesRead);
+        CRC32::Update(reinterpret_cast<unsigned char*>(buffer), bytesRead);
         percent = static_cast<int>((static_cast<double>(file.pos()) / static_cast<double>(file.size())) * 100);
 
         // prevent the function from emitting too much progress updates

@@ -15,12 +15,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     crc32.cpp \
     mysetting.cpp \
-    filecrc32.cpp
+    filecrc32.cpp \
+    lz_crc32.cpp
 
 HEADERS  += mainwindow.h \
     crc32.h \
     mysetting.h \
-    filecrc32.h
+    filecrc32.h \
+    crc_macros.h \
+    lz_crc32_table.h \
+    lz_crc32.h
 
 FORMS    += mainwindow.ui
 

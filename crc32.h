@@ -23,7 +23,7 @@ class CRC32
 public:
     CRC32();
     virtual ~CRC32();
-    void Update(char* buffer, int bufsize);
+    void Update(unsigned char* buffer, int bufsize);
 
     //!
     //! \brief Reset the crc32 value to a pristine state
@@ -33,7 +33,6 @@ public:
 
 private:
     unsigned int m_crc32;
-    static const unsigned int crcTable[256];
 };
 
 #endif

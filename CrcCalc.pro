@@ -39,4 +39,4 @@ OTHER_FILES += \
     "./icons/XCM.ico" \
     "icon.rc"
 
-*-g++:QMAKE_CXXFLAGS = "-std=c++0x"
+*-g++:QMAKE_CXXFLAGS = "-std=c++0x -flto"

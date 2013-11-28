@@ -1,8 +1,8 @@
 #ifndef LZ_CRC32_H
 #define LZ_CRC32_H
 
-#include <cstdint>
+#include <QtGlobal>
 
-extern uint32_t lzma_crc32(const uint8_t *buf, size_t size, uint32_t crc);
+extern quint32 lzma_crc32(quint8 *buf, quint32 size, quint32 crc);
 
 #endif // LZ_CRC32_H

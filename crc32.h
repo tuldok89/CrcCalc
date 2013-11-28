@@ -15,6 +15,8 @@
 #ifndef CRC32_H
 #define CRC32_H
 
+#include <QtGlobal>
+
 //!
 //! \brief The CRC32 class
 //!
@@ -23,7 +25,7 @@ class CRC32
 public:
     CRC32();
     virtual ~CRC32();
-    void Update(unsigned char* buffer, int bufsize);
+    void Update(quint8 *buffer, quint32 bufsize);
 
     //!
     //! \brief Reset the crc32 value to a pristine state

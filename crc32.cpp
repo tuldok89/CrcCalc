@@ -15,6 +15,8 @@
 #include "crc32.h"
 #include "lz_crc32.h"
 
+#include <QtGlobal>
+
 //!
 //! \brief Constructor
 //!
@@ -35,7 +37,7 @@ CRC32::~CRC32()
 //! \param buffer   Buffer to compute CRC-32 value for
 //! \param bufsize  number of bytes in buffer
 //!
-void CRC32::Update(unsigned char *buffer, int bufsize)
+void CRC32::Update(quint8 *buffer, quint32 bufsize)
 {
     m_crc32 = lzma_crc32(buffer, bufsize, m_crc32);
 }

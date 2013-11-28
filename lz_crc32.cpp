@@ -18,15 +18,20 @@
 
 #include "crc_macros.h"
 #include "lz_crc32_table.h"
-
+#include <QtEndian>
+#include <QtGlobal>
 
 // If you make any changes, do some bench marking! Seemingly unrelated
 // changes can very easily ruin the performance (and very probably is
 // very compiler dependent).
 
-uint32_t lzma_crc32(const uint8_t *buf, size_t size, uint32_t crc)
+quint32 lzma_crc32(quint8 *buf, quint32 size, quint32 crc)
 {
     crc = ~crc;
+
+#if Q_BYTE_ORDER == Q_BIG_ENDIAN
+    qToBigEndian(crc);
+#endif
 
     if (size > 8) {
         // Fix the alignment, if needed. The if statement above
@@ -69,6 +74,10 @@ uint32_t lzma_crc32(const uint8_t *buf, size_t size, uint32_t crc)
 
     while (size-- != 0)
         crc = lzma_crc32_table[0][*buf++ ^ A(crc)] ^ S8(crc);
+
+#if Q_BYTE_ORDER == Q_BIG_ENDIAN
+    qToLittleEndian(crc);
+#endif
 
     return ~crc;
 }

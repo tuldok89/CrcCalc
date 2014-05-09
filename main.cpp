@@ -31,7 +31,7 @@
 
 #include <QApplication>
 
-#define APP_VERSION "2.0.1"
+#define APP_VERSION "2.0.2"
 
 int main(int argc, char *argv[])
 {

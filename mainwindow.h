@@ -45,26 +45,21 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
     
 private slots:
     void on_actionAbout_Qt_triggered();
-
     void on_action_About_triggered();
-
     void doneProcessing(QString fileName, unsigned int crc32);
-
     void errorRaised(QString fileName);
-
     void progress(QString fileName, int val);
-
     void on_addFilesButton_clicked();
-
     void on_calculateCrcButton_clicked();
-
     void on_clearItemsButton_clicked();
-
     void on_deleteItemButton_clicked();
-
     void on_exportResultsButton_clicked();
 
 private:

@@ -36,7 +36,9 @@
 #include <QThreadPool>
 #include <QStringList>
 #include <QDebug>
-#include <QTableWidgetItem>
+#include <QtGui>
+#include <QUrl>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -44,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //Uniform initialization is not supported in some compilers
     //QStringList headers = {"File", "Progress", "Status", "CRC-32"};
     QStringList headers;
     headers.push_back("File");
@@ -54,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->filesTable->setColumnWidth(0, 350);
     QThreadPool::globalInstance()->setMaxThreadCount(1);
     this->setMinimumSize(this->size());
+
+    setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow()
@@ -187,4 +192,22 @@ void MainWindow::on_deleteItemButton_clicked()
 void MainWindow::on_exportResultsButton_clicked()
 {
     QMessageBox::information(this, "TODO", "Not yet implemented");
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasUrls())
+    {
+        event->acceptProposedAction();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    foreach (const QUrl &url, event->mimeData()->urls())
+    {
+        const QString &fileName = url.toLocalFile();
+        addNewRow(fileName, ui->filesTable);
+        m_fileNames.push_back(fileName);
+    }
 }
